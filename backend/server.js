@@ -22,20 +22,14 @@ app.use('/api/user', userRoutes)
 
 
 // connect to db
-const port = process.env.PORT || 4000;
- 
-app.listen(port, () => {
-  console.log(`App listening 1st at http://localhost:${port}`);
-});
-
-mongoose.set("strictQuery", false);
+mongoose.set('strictQuery', false);
 
 mongoose.connect(process.env.MONGO_URI)
   .then(() => {
     // listen for requests
-    app.listen(port, () => {
-     console.log('connected to db & listening on port', port)
-  })
+    app.listen(process.env.PORT, () => {
+     console.log('connected to db & listening on port', process.env.PORT)
+    })
   })
   .catch((error) => {
     console.log(error)

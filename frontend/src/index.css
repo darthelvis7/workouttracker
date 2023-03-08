@@ -132,3 +132,13 @@ form.signup, form.login {
 span.material-symbols-outlined {
   color: lightcoral;
 }
+
+.already {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.already-link {
+  text-decoration: none;
+}
