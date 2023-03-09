@@ -1,37 +1,38 @@
-require('dotenv').config()
+const express = require('express');
+const cors = require('cors');
+require('dotenv').config();
+const mongoose = require('mongoose');
 
-const express = require('express')
-const mongoose = require('mongoose')
-const workoutRoutes = require('./routes/workouts')
-const userRoutes = require('./routes/user')
+const webApp = express();
 
-// express app
-const app = express()
+const { API_PORT } = process.env;
+const PORT = process.env.PORT || API_PORT;
 
-// middleware
-app.use(express.json())
+webApp.use(express.urlencoded({extended: true}));
+webApp.use(express.json());
+webApp.use(cors({origin: true}));
 
-app.use((req, res, next) => {
-  console.log(req.path, req.method)
-  next()
-})
+webApp.use((req, res, next) => {
+    console.log(`Path ${req.path} with Method ${req.method}`);
+    next();
+});
 
-// routes
-app.use('/api/workouts', workoutRoutes)
-app.use('/api/user', userRoutes)
+const homeRoute = require('./routes/home_route');
+const workoutRoute = require('./routes/workouts_route');
 
+webApp.use('/', homeRoute.router);
+webApp.use('/api/workouts', workoutRoute.router);
 
-// connect to db
-mongoose.set('strictQuery', false);
+const { MONGO_URI } = process.env;
 
-mongoose.connect(process.env.MONGO_URI)
-  .then(() => {
-    // listen for requests
-    app.listen(process.env.PORT, () => {
-     console.log('connected to db & listening on port', process.env.PORT)
+mongoose.connect(MONGO_URI)
+    .then(() => {
+        webApp.listen(PORT, () => {
+            console.log(`Mongodb connected and Server is running at ${PORT}.`);
+        });
     })
-  })
-  .catch((error) => {
-    console.log(error)
-  })
+    .catch((err) => {
+        console.error('MongoDB connection error.');
+    });
+    
 
